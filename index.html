@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Raj ki Khushi</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fff0f5;
+      color: #4b2e2e;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    header {
+      background: #ff69b4;
+      padding: 1rem;
+      color: white;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .countdown-section {
+      margin: 2rem auto;
+    }
+
+    .countdown {
+      font-size: 1.8rem;
+      margin: 0.5rem;
+      color: #d63384;
+    }
+
+    .calendar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 2rem;
+    }
+
+    .month {
+      border: 2px solid #d63384;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+      width: 90%;
+      max-width: 600px;
+      padding: 1rem;
+    }
+
+    .month h3 {
+      margin: 0 0 1rem 0;
+      color: #b03060;
+    }
+
+    .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+
+    .day {
+      padding: 10px;
+      background: #fff;
+      border-radius: 5px;
+      border: 1px solid #ff69b4;
+    }
+
+    .past {
+      background: #ffc0cb;
+      text-decoration: line-through;
+    }
+  </style>
+</head>
+<body>
+  <header>Raj ki Khushi begins in...</header>
+
+  <div class="countdown-section">
+    <h2>⏰ Full Countdown</h2>
+    <div class="countdown" id="fullCountdown"></div>
+
+    <h2>⏳ Countdown in Hours</h2>
+    <div class="countdown" id="hoursCountdown"></div>
+
+    <h2>📆 Countdown in Days</h2>
+    <div class="countdown" id="daysCountdown"></div>
+
+    <h2>🗓️ Countdown in Months</h2>
+    <div class="countdown" id="monthsCountdown"></div>
+  </div>
+
+  <div class="calendar" id="calendarContainer"></div>
+
+  <script>
+    const targetDate = new Date("2026-04-25T23:00:00+05:30");
+
+    function updateCountdowns() {
+      const now = new Date();
+      const diff = targetDate - now;
+
+      // Full Countdown
+      if (diff <= 0) {
+        document.getElementById("fullCountdown").innerText = "🎊 It's Wedding Time!";
+        document.getElementById("hoursCountdown").innerText = "";
+        document.getElementById("daysCountdown").innerText = "";
+        document.getElementById("monthsCountdown").innerText = "";
+        return;
+      }
+
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const m = Math.floor((diff / (1000 * 60)) % 60);
+      const s = Math.floor((diff / 1000) % 60);
+      const totalHours = Math.floor(diff / (1000 * 60 * 60));
+      const totalMonths = Math.floor(d / 30);
+
+      document.getElementById("fullCountdown").innerText =
+        `${d} Days ${h} Hours ${m} Min ${s} Sec`;
+      document.getElementById("hoursCountdown").innerText = `${totalHours} Hours`;
+      document.getElementById("daysCountdown").innerText = `${d} Days`;
+      document.getElementById("monthsCountdown").innerText = `${totalMonths} Months`;
+    }
+
+    setInterval(updateCountdowns, 1000);
+    updateCountdowns();
+
+    // Calendar Logic
+    function generateCalendar() {
+      const container = document.getElementById("calendarContainer");
+      const startDate = new Date("2025-07-04T00:00:00+05:30");
+      const endDate = new Date("2026-04-25T23:00:00+05:30");
+
+      let currentDate = new Date(startDate);
+      let currentMonth = "";
+      let monthDiv = null;
+
+      while (currentDate <= endDate) {
+        const now = new Date();
+        const y = currentDate.getFullYear();
+        const m = currentDate.toLocaleString('default', { month: 'long' });
+
+        if (`${m} ${y}` !== currentMonth) {
+          currentMonth = `${m} ${y}`;
+          monthDiv = document.createElement("div");
+          monthDiv.className = "month";
+          const title = document.createElement("h3");
+          title.innerText = currentMonth;
+          const daysGrid = document.createElement("div");
+          daysGrid.className = "days";
+          monthDiv.appendChild(title);
+          monthDiv.appendChild(daysGrid);
+          container.appendChild(monthDiv);
+        }
+
+        const day = document.createElement("div");
+        day.className = "day";
+        day.innerText = currentDate.getDate();
+        if (currentDate < now) day.classList.add("past");
+        monthDiv.querySelector(".days").appendChild(day);
+
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    }
+
+    generateCalendar();
+  </script>
+</body>
+</html>
